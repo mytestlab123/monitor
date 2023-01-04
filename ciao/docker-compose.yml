@@ -1,0 +1,13 @@
+version: "3"
+services:
+  ciao:
+    image: brotandgames/ciao
+    container_name: ciao
+    ports:
+      - '8090:3000'
+    environment:
+      - SECRET_KEY_BASE=longpasswordIjw92319oDOXXXXX
+      - BASIC_AUTH_USERNAME=admin
+      - BASIC_AUTH_PASSWORD=admin
+    volumes:
+      - /opt/ciao/data:/app/db/sqlite/
