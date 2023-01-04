@@ -1,6 +1,6 @@
 #/bin/bash
 
-for file in website/*
+for file in *.json
 do
     echo $file
     curl -s -X POST -u admin:admin localhost:8090/checks.json \

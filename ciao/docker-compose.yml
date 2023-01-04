@@ -6,8 +6,12 @@ services:
     ports:
       - '8090:3000'
     environment:
-      - SECRET_KEY_BASE=longpasswordIjw92319oDOXXXXX
+      - SECRET_KEY_BASE=random
       - BASIC_AUTH_USERNAME=admin
       - BASIC_AUTH_PASSWORD=admin
+      - PROMETHEUS_ENABLED=true
+      - PROMETHEUS_BASIC_AUTH_USERNAME=admin
+      - PROMETHEUS_BASIC_AUTH_PASSWORD=admin
+      - CIAO_LOG_LEVEL=INFO
     volumes:
       - /opt/ciao/data:/app/db/sqlite/
