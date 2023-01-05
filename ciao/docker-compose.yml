@@ -13,5 +13,9 @@ services:
       - PROMETHEUS_BASIC_AUTH_USERNAME=admin
       - PROMETHEUS_BASIC_AUTH_PASSWORD=admin
       - CIAO_LOG_LEVEL=INFO
+      - CIAO_WEBHOOK_ENDPOINT_SLACK1=https://hooks.slack.com/services/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
+      - 'CIAO_WEBHOOK_PAYLOAD_SLACK1={"text":"[ciao] __name__: Status changed (__status_after__)"}'
+
+
     volumes:
       - /opt/ciao/data:/app/db/sqlite/
