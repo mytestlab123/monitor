@@ -10,27 +10,82 @@ MAKEFLAGS += --no-builtin-rules
 
 # ---------------------- COMMANDS ---------------------------
 
-dev: # Kick-off local dev environment & start coding! 💻
+.PHONY: dev kind monitor kong setup
+dev: kind # Kick-off local dev environment & start coding! 💻
+ifeq (,$(wildcard /tmp/kong/dev))
 	@echo "Creating kind k8s cluster."
-	# @kind create cluster --name kong
 	@kind create cluster --image kindest/node:v1.24.7 --name kong
+	@touch /tmp/kong/dev
+endif
+
+cluster: # Install kind
+ifeq (,$(wildcard /tmp/kong-cluster))
+	@echo "installing kind"
+	@curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.17.0/kind-linux-amd64
+	@chmod +x ./kind
+	@sudo mv ./kind /usr/local/bin/kind
+	@echo "Creating kind k8s cluster."
+	@kind create cluster --image kindest/node:v1.24.7 --name kong
+	@touch /tmp/kong-cluster
+endif
 
 monitor: # Installing Prometheus and Grafana
+ifeq (,$(wildcard /tmp/kong-monitor))
 	@helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 	@helm repo add grafana https://grafana.github.io/helm-charts
 	@helm install prometheus prometheus-community/prometheus --namespace monitoring --create-namespace --values prometheus.yaml --version 14.6.0
 	# @helm upgrade --install grafana grafana/grafana --namespace monitoring --values grafana.yaml --version 6.16.2 --set grafana.rbac.pspEnabled=false
 	@helm install grafana grafana/grafana --namespace monitoring --values grafana.yaml --version 6.16.2
+	@touch /tmp/kong-monitor
+endif
 
 kong: # Installing and Configuring Kong Gateway
+ifeq (,$(wildcard /tmp/kong-kong))
 	@helm repo add kong https://charts.konghq.com
 	@helm install mykong kong/kong --namespace kong --create-namespace  --values kong.yaml --set ingressController.installCRDs=false --version 2.3.0
 	@kubectl apply -f prometheus-kong-plugin.yaml
+	@touch /tmp/kong-kong
+endif
 
-setup: # Setup local dev environment
-	@echo "Installing.."
-	@curl -o- https://raw.githubusercontent.com/amitkarpe/setup/main/scripts/devops.sh | bash
-	@echo "Done."
+deployhttp: # Deploy http service
+ifeq (,$(wildcard /tmp/kong-deployhttp))
+	@kubectl apply -f services.yaml
+	@kubectl apply -f ingress.yaml
+	@touch /tmp/kong-deployhttp
+endif
+
+runservices: # Run prometheus, grafana, kong services using port-forward
+	@bash run_services.sh
+
+stopservices: # Stop all those services by killing kubectl
+	@ps aux | grep -i port-forward
+	@killall kubectl
+	@ps aux | grep -i port-forward
+
+sendtraffic: # Send HTTP traffic
+	@bash send_traffic.sh
+
+setup: cluster monitor kong deployhttp # Setup kind, prometheus, grafana, kong and http service
+ifeq (,$(wildcard /tmp/kong-setup))
+	@touch /tmp/kong-setup
+endif
+
+destroy: cluster monitor kong deployhttp # Setup kind, prometheus, grafana, kong and http service
+	@rm /tmp/kong-*
+	@kind delete cluster -n kong
+
+# SVN_INFO := $(shell git status 2> /dev/null; echo $$?)
+# test1:
+# var := $(shell kind create cluster --image kindest/node:v1.24.7 --name kong)
+# ifneq ($(.SHELLSTATUS),0)
+#   $(error shell command failed! output was $(var))
+# endif
+# SVN_INFO := $(shell ls -lh > /dev/null; echo $$?)
+# ifeq ($(SVN_INFO),0)
+# 	@echo $$SVN_INFO
+#   $(error "Not an SVN repo...")
+# endif
+
 
 purge: check-confirm # Clean up all local dev artifacts (node_modules, etc.)
 	@echo "Purging.."
