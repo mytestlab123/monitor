@@ -70,7 +70,7 @@ ifeq (,$(wildcard /tmp/kong-setup))
 	@touch /tmp/kong-setup
 endif
 
-destroy: cluster monitor kong deployhttp # Setup kind, prometheus, grafana, kong and http service
+destroy: # Destroy the full setup
 	@rm /tmp/kong-*
 	@kind delete cluster -n kong
 
