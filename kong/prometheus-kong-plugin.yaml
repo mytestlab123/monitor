@@ -1,3 +1,4 @@
+# https://docs.konghq.com/hub/kong-inc/prometheus/
 apiVersion: configuration.konghq.com/v1
 kind: KongClusterPlugin
 metadata:
@@ -6,5 +7,27 @@ metadata:
    kubernetes.io/ingress.class: kong
  labels:
    global: "true"
+config:
+  config.status_code_metrics: "true"
+  config.latency_metrics: "true"
+  config.request_size_metrics: "true"
+  config.response_size_metrics: "true"
+  config.request_count_metrics: "true"
+  config.request_latency_metrics: "true"
+  config.request_bandwidth_metrics: "true"
+  config.response_bandwidth_metrics: "true"
+  config.response_count_metrics: "true"
+  config.response_latency_metrics: "true"
+  bandwidth_metrics: "true"
+  status_code_metrics: "true"
+  latency_metrics: "true"
+  upstream_health_metrics: "true"
+  request_size_metrics: "true"
+  response_size_metrics: "true"
+  request_count_metrics: "true"
+  request_latency_metrics: "true"
+  request_bandwidth_metrics: "true"
+
+
 plugin: prometheus
 
