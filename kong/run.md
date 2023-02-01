@@ -13,7 +13,7 @@ POD_NAME=$(kubectl get pods --namespace monitoring -l "app.kubernetes.io/instanc
 kubectl --namespace monitoring port-forward $POD_NAME 3000 &
 
 
-POD_NAME=$(kubectl get pods --namespace kong -o jsonpath="{.items[0].metadata.name}")
+POD_NAME=$(kubectl get pods --namespace kong -l "app.kubernetes.io/name=kong" -o jsonpath="{.items[0].metadata.name}")
 
 
 kubectl --namespace kong port-forward $POD_NAME 8000 &
