@@ -44,6 +44,7 @@ kind: Service
 metadata:
   annotations:
     prometheus.io/scrape: "true"
+    prometheus.io/path: "/billing"
   name: billing
   labels:
     app: billing
@@ -62,6 +63,7 @@ kind: Service
 metadata:
   annotations:
     prometheus.io/scrape: "true"
+    prometheus.io/path: "/invoice"
   name: invoice
   labels:
     app: invoice
@@ -80,6 +82,7 @@ kind: Service
 metadata:
   annotations:
     prometheus.io/scrape: "true"
+    prometheus.io/path: "/invoice"
   name: comments
   labels:
     app: comments
