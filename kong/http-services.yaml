@@ -3,6 +3,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: http-svc
+  annotations:
+    prometheus.io/scrape: “true”  
 spec:
   replicas: 1
   selector:
@@ -40,6 +42,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  annotations:
+    prometheus.io/scrape: “true”  
   name: billing
   labels:
     app: billing
@@ -56,6 +60,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  annotations:
+    prometheus.io/scrape: “true”  
   name: invoice
   labels:
     app: invoice
@@ -72,6 +78,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  annotations:
+    prometheus.io/scrape: “true”  
   name: comments
   labels:
     app: comments
