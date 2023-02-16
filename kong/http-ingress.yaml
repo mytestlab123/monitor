@@ -5,7 +5,7 @@ metadata:
   annotations:
     konghq.com/strip-path: "true"
     kubernetes.io/ingress.class: kong
-    prometheus.io/scrape: “true”
+    prometheus.io/scrape: "true"
 spec:
   rules:
   - http:

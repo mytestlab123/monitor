@@ -1,6 +1,8 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
+  annotations:
+    prometheus.io/scrape: "true"
   name: example-app
   labels:
     team: frontend
