@@ -61,7 +61,7 @@ apiVersion: v1
 kind: Service
 metadata:
   annotations:
-    prometheus.io/scrape: “true”  
+    prometheus.io/scrape: "true"
   name: invoice
   labels:
     app: invoice
