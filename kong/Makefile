@@ -34,6 +34,8 @@ ifeq (,$(wildcard /tmp/kong-monitor))
 	@helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 	@helm repo add grafana https://grafana.github.io/helm-charts
 	@helm install prometheus prometheus-community/prometheus --namespace monitoring --create-namespace --values prometheus.yaml --version 14.6.0
+	# https://docs.konghq.com/kubernetes-ingress-controller/2.8.x/guides/prometheus-grafana/
+	# helm install promstack prometheus-community/kube-prometheus-stack --namespace monitoring --version 19.0.0 -f promstack.yaml
 	# @helm upgrade --install grafana grafana/grafana --namespace monitoring --values grafana.yaml --version 6.16.2 --set grafana.rbac.pspEnabled=false
 	@helm install grafana grafana/grafana --namespace monitoring --values grafana.yaml --version 6.16.2
 	@touch /tmp/kong-monitor
