@@ -1,33 +1,30 @@
-# https://bit.ly/2Z9LmuM
-# https://gist.githubusercontent.com/devadvocado/19ffe32238815e0f014007e2080a312e/raw/9829bfe8df624c6052765b93accd67536c1e2c56/multiple-services.yaml
-
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: sample-ingresses
   annotations:
     konghq.com/strip-path: "true"
-    kubernetes.io/ingress.class: "kong"
 spec:
+  ingressClassName: kong
   rules:
   - http:
      paths:
      - path: /billing
-       pathType: Prefix
+       pathType: ImplementationSpecific
        backend:
          service:
            name: billing
            port:
              number: 80
      - path: /comments
-       pathType: Prefix
+       pathType: ImplementationSpecific
        backend:
          service:
            name: comments
            port:
              number: 80
      - path: /invoice
-       pathType: Prefix
+       pathType: ImplementationSpecific
        backend:
          service:
            name: invoice

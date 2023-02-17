@@ -45,7 +45,6 @@ ifeq (,$(wildcard /tmp/k3s-cluster))
 	@touch /tmp/k3s-cluster
 endif
 
-
 # https://docs.konghq.com/kubernetes-ingress-controller/2.8.x/guides/prometheus-grafana/
 promstack: # Installing Prometheus and Grafana
 ifeq (,$(wildcard /tmp/kong-monitor))
@@ -53,33 +52,20 @@ ifeq (,$(wildcard /tmp/kong-monitor))
 	@helm install promstack prometheus-community/kube-prometheus-stack  --create-namespace --namespace monitoring --version 19.0.0 -f promstack.yaml
 	@sleep 5
 	@kubectl --namespace monitoring get pods -l "release=promstack"
-	@touch /tmp/kong-monitor
-endif
-
-monitor: # Installing Prometheus and Grafana
-ifeq (,$(wildcard /tmp/kong-monitor))
-	@helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-	@helm repo add grafana https://grafana.github.io/helm-charts
-	@helm install prometheus prometheus-community/prometheus --namespace monitoring --create-namespace --values prometheus.yaml --version 14.6.0
-	# @helm upgrade --install grafana grafana/grafana --namespace monitoring --values grafana.yaml --version 6.16.2 --set grafana.rbac.pspEnabled=false
-	@helm install grafana grafana/grafana --namespace monitoring --values grafana.yaml --version 6.16.2
+	@kubectl get all -n monitoring
 	@touch /tmp/kong-monitor
 endif
 
 kong2: # Installing and Configuring Kong Gateway
-ifeq (,$(wildcard /tmp/kong-kong))
+ifeq (,$(wildcard /tmp/kong-kong2))
 	@helm repo add kong https://charts.konghq.com
-	@helm install mykong kong/kong --namespace kong --set serviceMonitor.enabled=true --set serviceMonitor.labels.release=promstack
-	@kubectl apply -f prometheus-kong-plugin.yaml
-	@touch /tmp/kong-kong
-endif
-
-kong: # Installing and Configuring Kong Gateway
-ifeq (,$(wildcard /tmp/kong-kong))
-	@helm repo add kong https://charts.konghq.com
-	@helm install mykong kong/kong --namespace kong --create-namespace  --values kong.yaml --set ingressController.installCRDs=false --version 2.3.0
-	@kubectl apply -f prometheus-kong-plugin.yaml
-	@touch /tmp/kong-kong
+	@helm install mykong kong/kong --namespace kong --create-namespace --set serviceMonitor.enabled=true --set serviceMonitor.labels.release=promstack --set ingressController.enabled=true
+	@kubectl apply -f prometheus-kong-plugin2.yaml
+	@kubectl get KongClusterPlugin -A
+	@kubectl get all -n kong
+	@kubectl get serviceMonitor -A
+	@kubectl get podMonitor -A
+	@touch /tmp/kong-kong2
 endif
 
 deployhttp: # Deploy http service
@@ -93,9 +79,12 @@ runservices: # Run prometheus, grafana, kong services using port-forward
 	@bash run_services.sh
 
 stopservices: # Stop all those services by killing kubectl
+	@echo "Stopping all services"
+	@netstat -tlnp | grep -E '9090|3000|8000'
 	@ps aux | grep -i port-forward
 	@killall kubectl
 	@ps aux | grep -i port-forward
+	@netstat -tlnp | grep -E '9090|3000|8000'
 
 sendtraffic: # Send HTTP traffic
 	@bash send_traffic.sh
@@ -108,6 +97,29 @@ endif
 destroy: # Destroy the full setup
 	@rm /tmp/kong-*
 	@kind delete cluster -n kong
+
+destroy-k3s: # Destroy the full k3s cluster
+	@/usr/local/bin/k3s-killall.sh
+	@/usr/local/bin/k3s-uninstall.sh
+	@rm /tmp/k3s-cluster /tmp/kong-* 
+
+kong: # Installing and Configuring Kong Gateway
+ifeq (,$(wildcard /tmp/kong-kong))
+	@helm repo add kong https://charts.konghq.com
+	@helm install mykong kong/kong --namespace kong --create-namespace  --values kong.yaml --set ingressController.installCRDs=false --version 2.3.0
+	@kubectl apply -f prometheus-kong-plugin.yaml
+	@touch /tmp/kong-kong
+endif
+
+monitor: # Installing Prometheus and Grafana
+ifeq (,$(wildcard /tmp/kong-monitor))
+	@helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+	@helm repo add grafana https://grafana.github.io/helm-charts
+	@helm install prometheus prometheus-community/prometheus --namespace monitoring --create-namespace --values prometheus.yaml --version 14.6.0
+	# @helm upgrade --install grafana grafana/grafana --namespace monitoring --values grafana.yaml --version 6.16.2 --set grafana.rbac.pspEnabled=false
+	@helm install grafana grafana/grafana --namespace monitoring --values grafana.yaml --version 6.16.2
+	@touch /tmp/kong-monitor
+endif
 
 # SVN_INFO := $(shell git status 2> /dev/null; echo $$?)
 # test1:

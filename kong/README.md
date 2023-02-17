@@ -38,6 +38,11 @@
 ```
 
 ### Reference:
-* [Blog](https://konghq.com/blog/prometheus-grafana-kubernetes)
+* [Latest Guide - Integrate the Kubernetes Ingress Controller with Prometheus/Grafana](https://docs.konghq.com/kubernetes-ingress-controller/latest/guides/prometheus-grafana/)
+* [Old Blog - September 21, 2021](https://konghq.com/blog/prometheus-grafana-kubernetes)
+* [Very old Blog - February 14, 2019](https://konghq.com/blog/observability-kubernetes-kong)
 * [Video](https://www.youtube.com/watch?v=GJRbpQth3QY)
 * [KONG ON AWS WORKSHOP](https://kong.awsworkshop.io/)
+* [Kong + minikube](https://gist.github.com/subnetmarco/acf30a6e87c467082e0f3870d88bc972)
+* [Using Kong ingress controller for K3s](https://speakerdeck.com/xibuka/using-kong-ingress-controller-for-k3s)
+
