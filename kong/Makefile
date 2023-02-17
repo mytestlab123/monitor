@@ -29,12 +29,30 @@ ifeq (,$(wildcard /tmp/kong-cluster))
 	@touch /tmp/kong-cluster
 endif
 
+# https://rancher.com/docs/k3s/latest/en/installation/install-options/server-config/#cluster-options  
+k3s: # Install k3s cluster
+ifeq (,$(wildcard /tmp/k3s-cluster))
+	@echo "installing k3s"
+	@export INSTALL_K3S_CHANNEL='stable'
+	@export INSTALL_K3S_VERSION="v1.23.10+k3s1"
+	@curl -sfL https://get.k3s.io | sh  -s - --write-kubeconfig-mode 777 --disable traefik
+	@mkdir -p ~/.kube
+	@cp -v /etc/rancher/k3s/k3s.yaml ~/.kube/config
+	@chmod 600 ~/.kube/config
+	@export KUBECONFIG=~/.kube/config
+	@kubectl get nodes
+	@kubectl get ingress --all-namespaces
+	@touch /tmp/k3s-cluster
+endif
+
 
 # https://docs.konghq.com/kubernetes-ingress-controller/2.8.x/guides/prometheus-grafana/
 promstack: # Installing Prometheus and Grafana
 ifeq (,$(wildcard /tmp/kong-monitor))
 	@helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-	helm install promstack prometheus-community/kube-prometheus-stack  --create-namespace --namespace monitoring --version 19.0.0 -f promstack.yaml
+	@helm install promstack prometheus-community/kube-prometheus-stack  --create-namespace --namespace monitoring --version 19.0.0 -f promstack.yaml
+	@sleep 5
+	@kubectl --namespace monitoring get pods -l "release=promstack"
 	@touch /tmp/kong-monitor
 endif
 
