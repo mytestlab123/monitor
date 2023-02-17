@@ -4,8 +4,8 @@ metadata:
   name: sample-ingresses
   annotations:
     konghq.com/strip-path: "true"
-    kubernetes.io/ingress.class: kong
-    prometheus.io/scrape: "true"
+    # kubernetes.io/ingress.class: kong
+    # prometheus.io/scrape: "true"
 spec:
   rules:
   - http:
