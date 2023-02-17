@@ -29,16 +29,31 @@ ifeq (,$(wildcard /tmp/kong-cluster))
 	@touch /tmp/kong-cluster
 endif
 
+
+# https://docs.konghq.com/kubernetes-ingress-controller/2.8.x/guides/prometheus-grafana/
+promstack: # Installing Prometheus and Grafana
+ifeq (,$(wildcard /tmp/kong-monitor))
+	@helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+	helm install promstack prometheus-community/kube-prometheus-stack --namespace monitoring --version 19.0.0 -f promstack.yaml
+	@touch /tmp/kong-monitor
+endif
+
 monitor: # Installing Prometheus and Grafana
 ifeq (,$(wildcard /tmp/kong-monitor))
 	@helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 	@helm repo add grafana https://grafana.github.io/helm-charts
 	@helm install prometheus prometheus-community/prometheus --namespace monitoring --create-namespace --values prometheus.yaml --version 14.6.0
-	# https://docs.konghq.com/kubernetes-ingress-controller/2.8.x/guides/prometheus-grafana/
-	# helm install promstack prometheus-community/kube-prometheus-stack --namespace monitoring --version 19.0.0 -f promstack.yaml
 	# @helm upgrade --install grafana grafana/grafana --namespace monitoring --values grafana.yaml --version 6.16.2 --set grafana.rbac.pspEnabled=false
 	@helm install grafana grafana/grafana --namespace monitoring --values grafana.yaml --version 6.16.2
 	@touch /tmp/kong-monitor
+endif
+
+kong2: # Installing and Configuring Kong Gateway
+ifeq (,$(wildcard /tmp/kong-kong))
+	@helm repo add kong https://charts.konghq.com
+	@helm install mykong kong/kong --namespace kong --create-namespace  --values kong.yaml --set ingressController.installCRDs=false --version 2.16.0
+	@kubectl apply -f prometheus-kong-plugin.yaml
+	@touch /tmp/kong-kong
 endif
 
 kong: # Installing and Configuring Kong Gateway
