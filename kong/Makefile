@@ -34,7 +34,7 @@ endif
 promstack: # Installing Prometheus and Grafana
 ifeq (,$(wildcard /tmp/kong-monitor))
 	@helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-	helm install promstack prometheus-community/kube-prometheus-stack --namespace monitoring --version 19.0.0 -f promstack.yaml
+	helm install promstack prometheus-community/kube-prometheus-stack  --create-namespace --namespace monitoring --version 19.0.0 -f promstack.yaml
 	@touch /tmp/kong-monitor
 endif
 
@@ -51,7 +51,7 @@ endif
 kong2: # Installing and Configuring Kong Gateway
 ifeq (,$(wildcard /tmp/kong-kong))
 	@helm repo add kong https://charts.konghq.com
-	@helm install mykong kong/kong --namespace kong --create-namespace  --values kong.yaml --set ingressController.installCRDs=false --version 2.16.0
+	@helm install mykong kong/kong --namespace kong --set serviceMonitor.enabled=true --set serviceMonitor.labels.release=promstack
 	@kubectl apply -f prometheus-kong-plugin.yaml
 	@touch /tmp/kong-kong
 endif
