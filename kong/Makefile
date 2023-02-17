@@ -66,8 +66,8 @@ endif
 
 deployhttp: # Deploy http service
 ifeq (,$(wildcard /tmp/kong-deployhttp))
-	@kubectl apply -f services.yaml
-	@kubectl apply -f ingress.yaml
+	@kubectl apply -f kong-example/http-services.yaml
+	@kubectl apply -f kong-example/http-ingress.yaml
 	@touch /tmp/kong-deployhttp
 endif
 
