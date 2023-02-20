@@ -4,7 +4,7 @@
 * [ServiceMonitor](https://www.acagroup.be/en/blog/auto-discovery-of-kubernetes-endpoint-services-prometheus/)
 * [kong & eks](https://kong.awsworkshop.io/eks-enterprise-setup/observability/data_plane_monitoring.html)
 * [Add Anonymous authentication](https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/#anonymous-authentication)
-* [Auth for grafana]
+* [Auth for grafana](https://github.com/grafana/grafana/blob/main/conf/sample.ini)
 
 ```
 kubectl get cm promstack-grafana -ojson | jq .data
