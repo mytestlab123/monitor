@@ -3,14 +3,13 @@ kind: ServiceMonitor
 metadata:
   annotations:
     prometheus.io/scrape: "true"
-  name: example-promstack
+  name: http-servicemonitor
   labels:
-    team: frontend
     release: promstack
-    enable-metrics: "true"
 spec:
   selector:
     matchLabels:
-      release: promstack
+      app: http-svc
+      enable-metrics: "true"
   endpoints:
-  - port: web
+  - port: http

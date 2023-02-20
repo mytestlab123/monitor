@@ -3,7 +3,7 @@ kind: ServiceMonitor
 metadata:
   name: comments
   labels:
-    release: kong-dp
+    release: promstack
 spec:
   namespaceSelector:
     any: true

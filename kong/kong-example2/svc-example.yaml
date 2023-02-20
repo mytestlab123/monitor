@@ -3,12 +3,12 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: example-app
+  name: httpbin
   labels:
-    team: frontend
+    release: promstack
 spec:
   selector:
     matchLabels:
-      app: example-app
+      app: httpbin
   endpoints:
-  - port: web
+  - port: http
