@@ -49,7 +49,7 @@ endif
 promstack: # Installing Prometheus and Grafana
 ifeq (,$(wildcard /tmp/kong-monitor))
 	@helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-	@helm install promstack prometheus-community/kube-prometheus-stack  --create-namespace --namespace monitoring --version 19.0.0 -f promstack.yaml
+	@helm install promstack prometheus-community/kube-prometheus-stack  --create-namespace --namespace monitoring --version 19.0.0 -f promstack.yaml --set alertmanager.enabled=false
 	@sleep 5
 	@kubectl --namespace monitoring get pods -l "release=promstack"
 	@kubectl get all -n monitoring

@@ -3,6 +3,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: http-svc
+  labels:
+    enable-metrics: "true"
   # annotations:
   #   prometheus.io/scrape: "true"
 spec:
@@ -47,6 +49,7 @@ metadata:
   #   prometheus.io/path: "/billing"
   name: billing
   labels:
+    enable-metrics: "true"
     app: billing
 spec:
   type: NodePort
@@ -67,6 +70,7 @@ metadata:
   name: invoice
   labels:
     app: invoice
+    enable-metrics: "true"
 spec:
   type: NodePort
   ports:
@@ -86,6 +90,7 @@ metadata:
   name: comments
   labels:
     app: comments
+    enable-metrics: "true"
 spec:
   type: NodePort
   ports:
