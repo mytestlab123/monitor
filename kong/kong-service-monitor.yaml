@@ -1,0 +1,14 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: kong-service-monitor
+  labels:
+    release: promstack
+spec:
+  namespaceSelector:
+    any: true
+  endpoints:
+  - port: metrics
+  selector:
+    matchLabels:
+      app: kong-monitoring
