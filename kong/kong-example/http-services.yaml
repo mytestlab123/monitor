@@ -3,6 +3,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: http-svc
+  annotations:
+    prometheus.io/scrape: "true" # Ask Prometheus to scrape the
+    prometheus.io/port: "8100"   # Kong pods for metrics
   labels:
     enable-metrics: "true"
 spec:

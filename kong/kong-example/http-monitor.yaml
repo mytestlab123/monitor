@@ -7,8 +7,11 @@ metadata:
   labels:
     release: promstack
 spec:
+  # namespaceSelector:
+  #   any: true
   namespaceSelector:
-    any: true
+    matchNames:
+    - kong
   selector:
     matchLabels:
       app: http-svc

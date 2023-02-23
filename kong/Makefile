@@ -29,6 +29,36 @@ ifeq (,$(wildcard /tmp/kong-cluster))
 	@touch /tmp/kong-cluster
 endif
 
+
+# https://rancher.com/docs/k3s/latest/en/installation/install-options/server-config/#cluster-options  
+mini: # Install Minikube cluster
+ifeq (,$(wildcard /tmp/mini-cluster))
+	@echo "installing mini"
+	@if [ ! -x "$(which minikube)" ];
+		then
+			echo "minikube already installed";
+		else
+			echo "minikube not installed";
+			curl -Lo /tmp/minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+			sudo install /tmp/minikube /usr/local/bin/minikube
+	fi
+	@mkdir -p ~/.kube
+	@minikube start --kubernetes-version=v1.24.0 --driver=docker
+	@minikube status 
+	@alias kubectl="minikube kubectl --"
+	@minikube kubectl -- get nodes
+	@minikube kubectl -- get pods -A
+	@touch /tmp/mini-cluster
+endif
+
+helm: # Install helm
+ifeq (,$(wildcard /usr/local/bin/helm))
+	@echo "Installing Helm"
+	@curl -o- https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+	@printf "\n \n \n"
+	@helm version
+endif
+
 # https://rancher.com/docs/k3s/latest/en/installation/install-options/server-config/#cluster-options  
 k3s: # Install k3s cluster
 ifeq (,$(wildcard /tmp/k3s-cluster))
@@ -49,11 +79,24 @@ endif
 promstack: # Installing Prometheus and Grafana
 ifeq (,$(wildcard /tmp/kong-monitor))
 	@helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-	@helm upgrade --install promstack prometheus-community/kube-prometheus-stack  --create-namespace --namespace monitoring --version 19.0.0 -f promstack.yaml --set alertmanager.enabled=false
+	@helm upgrade --install promstack prometheus-community/kube-prometheus-stack  --create-namespace --namespace monitoring --version 40.0.0 -f promstack2.yaml --set alertmanager.enabled=false
 	@sleep 5
 	@kubectl --namespace monitoring get pods -l "release=promstack"
 	@kubectl get all -n monitoring
 	@touch /tmp/kong-monitor
+endif
+
+kong3: # Installing and Configuring Kong Gateway
+ifeq (,$(wildcard /tmp/kong-kong3))
+	@helm repo add kong https://charts.konghq.com
+	@helm upgrade --install kong kong/kong --namespace kong --create-namespace --set serviceMonitor.enabled=true --set serviceMonitor.labels.release=promstack --set ingressController.enabled=true 
+	@kubectl apply -f prometheus-kong-plugin2.yaml
+	@kubectl get KongClusterPlugin -A
+	@kubectl get all -n kong
+	@sleep 10
+	@kubectl get serviceMonitor -A
+	@kubectl get podMonitor -A
+	@touch /tmp/kong-kong3
 endif
 
 kong2: # Installing and Configuring Kong Gateway
