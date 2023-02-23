@@ -5,8 +5,6 @@ metadata:
   name: http-svc
   labels:
     enable-metrics: "true"
-  # annotations:
-  #   prometheus.io/scrape: "true"
 spec:
   replicas: 1
   selector:
@@ -44,9 +42,9 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  # annotations:
-  #   prometheus.io/scrape: "true"
-  #   prometheus.io/path: "/billing"
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/path: "/billing"
   name: billing
   labels:
     enable-metrics: "true"
@@ -84,9 +82,9 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  # annotations:
-  #   prometheus.io/scrape: "true"
-  #   prometheus.io/path: "/invoice"
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/path: "/comments"
   name: comments
   labels:
     app: comments

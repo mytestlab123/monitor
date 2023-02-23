@@ -21,7 +21,7 @@ grafana:
       kong-dash:
         gnetId: 7424  # Install the following Grafana dashboard in the
         revision: 7   # instance: https://grafana.com/grafana/dashboards/7424-kong-official/
-        datasource: Prometheus
+        datasource: "Prometheus-1"
       kic-dash:
         gnetId: 15662
         datasource: Prometheus

@@ -9,6 +9,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: httpbin-deployment
+  annotations:
+   prometheus.io/path: "/anything"
+  #  prometheus.io/scrape: "true" # Ask Prometheus to scrape the
+  #  prometheus.io/port: "8100"   # Kong pods for metrics
+
   labels:
     app: httpbin
 spec:
@@ -30,6 +35,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  annotations:
+   prometheus.io/path: "/anything"
   labels:
     app: httpbin
   name: httpbin-deployment
