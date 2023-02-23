@@ -6,6 +6,8 @@
 * [Add Anonymous authentication](https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/#anonymous-authentication)
 * [Auth for grafana](https://github.com/grafana/grafana/blob/main/conf/sample.ini)
 * [Review Kong Vital](https://docs.konghq.com/gateway/latest/kong-enterprise/analytics/metrics/)
+* EKS - create server + ing + dns ==> check metrics
+* kubernetes-pods Job vs ServiceMonitor - We can create target both ways
 
 ```
 kubectl get cm promstack-grafana -ojson | jq .data
