@@ -8,6 +8,8 @@
 * [Review Kong Vital](https://docs.konghq.com/gateway/latest/kong-enterprise/analytics/metrics/)
 * EKS - create server + ing + dns ==> check metrics
 * kubernetes-pods Job vs ServiceMonitor - We can create target both ways
+* Use minikube with kong
+
 
 ```
 kubectl get cm promstack-grafana -ojson | jq .data
